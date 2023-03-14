@@ -46,13 +46,17 @@ const VocabList = (props) => {
 	    const pythonProcess = spawn('python', ['../speech_recognition/speech-recognition.py', spokenText]);
 	    pythonProcess.stdout.on('data', (data) => {
 	      console.log(data.toString());
-	      props.navigation
-		.getParam("definitions")
-		.push({ text: data.toString(), id: uuid.v4() });
-	    });
+	     
 	  };
 	
-	
+	fetch('http://127.0.0.1/data')
+	  .then(response => response.json())
+	  .then(data => {
+	    	 props.navigation
+		.getParam("definitions")
+		.push({ text: data.toString(), id: uuid.v4() });
+	    })
+	  .catch(error => console.error(error));
 	
 	const changeModalVisible = (bool) => {
 		setisModalVisible(bool);
