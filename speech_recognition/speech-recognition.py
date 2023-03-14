@@ -6,6 +6,7 @@ import pyaudio
 from queue import Queue
 from threading import Thread
 from vosk import Model, KaldiRecognizer
+from speech-recognitionAPI import flaskServer
 import requests
 
 CHANNELS = 1
@@ -102,6 +103,7 @@ def speech_recognition(output):
                     print(definitionData[0]['word'].capitalize() + " (" + definitionData[0]['meanings'][0]
                           ['partOfSpeech'] + "): " + definitionData[0]['meanings'][0]['definitions'][0]['definition'], end=", ")
                     print([url for url in definitionData[0]['sourceUrls']])
+                    api.add_resource([url for url in definitionData[0]['sourceUrls']])
             except:
                 continue
         time.sleep(1)
