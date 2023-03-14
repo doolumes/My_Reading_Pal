@@ -11,7 +11,8 @@ import {
 import CreateModal from "../components/CreateModal";
 import Definition from "../components/Definition";
 import uuid from "react-native-uuid";
-
+import Voice from 'react-native-voice';
+import { spawn } from 'child_process';
 const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
 const HEIGHT_MODAL = 343;
@@ -25,6 +26,34 @@ const VocabList = (props) => {
 	const [isModalVisible, setisModalVisible] = React.useState(false);
 
 	const [recording, setRecording] = React.useState(false);
+	const [recognizedText, setRecognizedText] = useState('');
+
+	const onRecordButtonPress = () => {
+	    if (isRecording) {
+	      Voice.stop();
+	    } else {
+	      Voice.start('en-US');
+	    }
+	    setIsRecording(!isRecording);
+	  };
+
+	  const onSpeechRecognized = (e) => {
+	    setRecognizedText(e.value);
+	  };
+
+	  const onSpeechResults = (e) => {
+	    const spokenText = e.value[0];
+	    const pythonProcess = spawn('python', ['../speech_recognition/speech-recognition.py', spokenText]);
+	    pythonProcess.stdout.on('data', (data) => {
+	      console.log(data.toString());
+	      props.navigation
+		.getParam("definitions")
+		.push({ text: data.toString(), id: uuid.v4() });
+	    });
+	  };
+	
+	
+	
 	const changeModalVisible = (bool) => {
 		setisModalVisible(bool);
 	};
